@@ -1,7 +1,7 @@
-package com.example.springdemo.controller
+package com.example.springhttpservice.controller
 
-import com.example.springdemo.bean.DisposeExcelFiles
-import com.example.springdemo.bean.HttpResPonse
+import com.example.springhttpservice.bean.DisposeExcelFiles
+import com.example.springhttpservice.bean.HttpResPonse
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity

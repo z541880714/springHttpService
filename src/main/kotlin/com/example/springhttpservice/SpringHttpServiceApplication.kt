@@ -1,11 +1,11 @@
-package com.example.springdemo
+package com.example.springhttpservice
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class SpringDemoApplication
+class SpringHttpServiceApplication
 
 fun main(args: Array<String>) {
-    runApplication<SpringDemoApplication>(*args)
+    runApplication<SpringHttpServiceApplication>(*args)
 }

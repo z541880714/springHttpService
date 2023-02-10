@@ -1,4 +1,4 @@
-package com.example.springdemo.bean
+package com.example.springhttpservice.bean
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem

@@ -1,4 +1,4 @@
-package com.example.springdemo.bean
+package com.example.springhttpservice.bean
 
 import java.util.*
 
@@ -43,14 +43,14 @@ data class OriginData(
         val shchgzhd: Int, //市场关注度
 ) {
     companion object {
-        fun instance(vararg params: String) = OriginData(
+        /*fun instance(vararg params: String) = OriginData(
                 codeStr = params[0], name = params[1],
                 zhulikpb = params[3].run { if (isValid()) 0f else this.toFloat() },
                 lsshbh = params[4].run { if (isValid()) 0f else this.toFloat() },
 
 
 
-        )
+        )*/
     }
 }
 
