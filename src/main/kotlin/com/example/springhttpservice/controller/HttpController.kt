@@ -1,7 +1,7 @@
 package com.example.springhttpservice.controller
 
 import com.example.springhttpservice.bean.DisposeExcelFiles
-import com.example.springhttpservice.bean.HttpResPonse
+import com.example.springhttpservice.bean.HttpResponse
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest
 @RestController
 class HttpController {
     @Autowired
-    lateinit var httpResPonse: HttpResPonse
+    lateinit var httpResPonse: HttpResponse
 
     @Autowired
     lateinit var disposeExcel: DisposeExcelFiles
@@ -30,28 +30,23 @@ class HttpController {
         println("host: $host,  url:${request.requestURL}")
 
         val type = request.getParameter("type")
-        val action = request.getParameter("action") // origin / compare
-        println("action: $action")
         if (type.isEmpty()) error("request type is empty")
         when (type) {
             "file" -> {
-                val multiMap = request.run { this as MultipartHttpServletRequest }.fileMap
-                val file = multiMap["file"] ?: return httpResPonse.responseNoFile
-                val fileName = file.originalFilename
-                val ins = file.inputStream
-                when (action) {
-                    "origin" -> {
-                        disposeExcel.excelOrigin(fileName, ins)
-                    }
-
-                    "compare" -> {
-                        disposeExcel.excelCompare(fileName, ins)
-                    }
+                val multiMap = request.run { this as MultipartHttpServletRequest }.multiFileMap
+                if (multiMap.size == 0) {
+                    return httpResPonse.responseNoFile
                 }
-            }
+                val files = multiMap["file"] ?: return httpResPonse.responseNoFile
+                val fileName = files[0].originalFilename
+                if (fileName.isNullOrEmpty()) return httpResPonse.responseNoFile
+                println("fileName:$fileName")
+                if (!fileName.matches("^20\\d{6}$".toRegex())) return httpResPonse.responseFileNameFormatError
 
-            else -> {
-                //其他的类型不处理...
+                val external = fileName.substringAfter('.')
+                if (external != "xlsx") return httpResPonse.responseFileExternalTypeError
+                val ins = files[0].inputStream
+                disposeExcel.excelOrigin(fileName, ins)
             }
         }
         return httpResPonse.responseOK

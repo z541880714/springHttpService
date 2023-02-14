@@ -2,6 +2,7 @@ package com.example.springhttpservice.bean
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem
+import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.stereotype.Service
@@ -22,16 +23,22 @@ class DisposeExcelFiles {
         return workbook
     }
 
-    //excel 比较文件 HSSFWorkbook
-    fun excelCompare(fileName: String?, input: InputStream) {
-        val workbook = convertToWorkbook(input)
-
-    }
-
     //原始文件,读取..
-    fun excelOrigin(fileName: String?, input: InputStream) {
+    /**
+     * @param fileName 文件格式.. 约定为日期格式.. 如果格式不对, 那么放弃读取..
+     */
+    fun excelOrigin(fileName: String, input: InputStream) {
         val workbook = convertToWorkbook(input)
         val sheet = workbook.getSheetAt(0)
+        var index = 0 // 从第二行开始.
+        sheet.rowIterator().forEachRemaining {
+            if (index++ == 0) return@forEachRemaining // 第一行标题不读..
+        }
+        println("index : $index")
+    }
+
+    private fun readRow(row: Row) {
+
     }
 
 }
