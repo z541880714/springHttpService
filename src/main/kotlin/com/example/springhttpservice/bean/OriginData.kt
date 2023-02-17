@@ -11,7 +11,7 @@ fun String.isValid() = isEmpty() || this == "--"
 
 fun String.convertToDate(date: Date): Date {
     if (!this.matches("^\\d\\d?:\\d\\d?:\\d\\d?$".toRegex())) {
-        error("日期格式有误, 请检查: $this")
+        return date
     }
     val nums = this.split(":")
     date.hours = nums[0].toInt()

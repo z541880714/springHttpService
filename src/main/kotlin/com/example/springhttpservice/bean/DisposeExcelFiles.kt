@@ -1,13 +1,8 @@
 package com.example.springhttpservice.bean
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem
 import org.apache.poi.ss.usermodel.Row
-import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.stereotype.Service
-import java.io.File
-import java.io.FileOutputStream
 import java.io.InputStream
 
 

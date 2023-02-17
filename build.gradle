@@ -12,8 +12,8 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 repositories {
-    maven{url'https://maven.aliyun.com/repository/public/'}
-    maven{url'https://jitpack.io'}
+    maven { url 'https://maven.aliyun.com/repository/public/' }
+    maven { url 'https://jitpack.io' }
     mavenCentral()
     google()
 }
@@ -21,11 +21,8 @@ repositories {
 dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-web-services'
-    implementation  'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
-    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     implementation 'joda-time:joda-time:2.12.0'
@@ -33,13 +30,12 @@ dependencies {
     // excel poi
     implementation 'org.apache.poi:poi-ooxml:3.9'
     //sqlite3
-    implementation 'org.xerial:sqlite-jdbc:3.36.0.3'
-    implementation 'org.projectlombok:lombok'
-    implementation 'com.github.gwenn:sqlite-dialect:0.1.2'
+    implementation 'com.h2database:h2'
+
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
 
+}
 
 
 tasks.withType(KotlinCompile) {

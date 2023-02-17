@@ -2,8 +2,11 @@ package com.example.springhttpservice.controller
 
 import com.example.springhttpservice.bean.DisposeExcelFiles
 import com.example.springhttpservice.bean.HttpResponse
+import com.example.springhttpservice.model.User
+import com.example.springhttpservice.service.UserService
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -12,15 +15,17 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartHttpServletRequest
 
 @RestController
-class HttpController {
+class HttpController(@Autowired val userService: UserService) {
     @Autowired
     lateinit var httpResPonse: HttpResponse
 
     @Autowired
     lateinit var disposeExcel: DisposeExcelFiles
 
+
     @GetMapping("/")
-    fun httpRequest(@RequestHeader("Host") host: String, request: HttpServletRequest): ResponseEntity<String> {
+    fun httpRequest(@RequestHeader("Host") host: String,
+                    request: HttpServletRequest): ResponseEntity<String> {
         println("=============================> host:$host, request:${request.requestURL}")
         return httpResPonse.responseHelloWorld()
     }
@@ -41,7 +46,8 @@ class HttpController {
                 val fileName = files[0].originalFilename
                 if (fileName.isNullOrEmpty()) return httpResPonse.responseNoFile
                 println("fileName:$fileName")
-                if (!fileName.matches("^20\\d{6}$".toRegex())) return httpResPonse.responseFileNameFormatError
+                if (!fileName.matches(
+                                "^20\\d{6}.xlsx$".toRegex())) return httpResPonse.responseFileNameFormatError
 
                 val external = fileName.substringAfter('.')
                 if (external != "xlsx") return httpResPonse.responseFileExternalTypeError
@@ -51,5 +57,7 @@ class HttpController {
         }
         return httpResPonse.responseOK
     }
+
+
 
 }
