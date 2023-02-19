@@ -2,17 +2,17 @@ package com.example.springhttpservice.controller
 
 import com.example.springhttpservice.bean.DisposeExcelFiles
 import com.example.springhttpservice.bean.HttpResponse
-import com.example.springhttpservice.model.User
 import com.example.springhttpservice.service.UserService
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
+import java.io.File
 
 @RestController
 class HttpController(@Autowired val userService: UserService) {
@@ -43,21 +43,37 @@ class HttpController(@Autowired val userService: UserService) {
                     return httpResPonse.responseNoFile
                 }
                 val files = multiMap["file"] ?: return httpResPonse.responseNoFile
-                val fileName = files[0].originalFilename
-                if (fileName.isNullOrEmpty()) return httpResPonse.responseNoFile
-                println("fileName:$fileName")
-                if (!fileName.matches(
-                                "^20\\d{6}.xlsx$".toRegex())) return httpResPonse.responseFileNameFormatError
-
-                val external = fileName.substringAfter('.')
-                if (external != "xlsx") return httpResPonse.responseFileExternalTypeError
-                val ins = files[0].inputStream
-                disposeExcel.excelOrigin(fileName, ins)
+                files.forEach {
+                    when (disposeFile(it)) {
+                        1 -> return httpResPonse.responseNoFile
+                        2 -> return httpResPonse.responseFileNameFormatError
+                        3 -> return httpResPonse.responseFileExternalTypeError
+                    }
+                }
             }
         }
         return httpResPonse.responseOK
     }
 
+    /**
+     * @return 0:成功 1: httpResPonse.responseNoFile,
+     * 2:httpResPonse.responseFileNameFormatError
+     * 3: httpResPonse.responseFileExternalTypeError
+     */
+    private fun disposeFile(file: MultipartFile): Int {
+        println("start dispose file , name:${file.originalFilename}")
+        val fileName = file.originalFilename
+        //无此文件.
+        if (fileName.isNullOrEmpty()) return 1
+        //日期格式不对.
+        if (!fileName.matches("^20\\d{6}.xlsx$".toRegex())) return 2
+        val external = fileName.substringAfter('.')
+        //文件名格式不对.
+        if (external != "xlsx") return 3
+        val ins = file.inputStream
+        disposeExcel.excelOrigin(fileName.substringBefore('.'), ins)
+        return 0
+    }
 
 
 }
