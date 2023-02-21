@@ -6,6 +6,7 @@ import com.example.springhttpservice.model.CalData
 import com.example.springhttpservice.model.OriginData
 import com.example.springhttpservice.service.CalDataService
 import com.example.springhttpservice.service.OriginDataService
+import com.example.springhttpservice.utils.dateFormat1
 import com.example.springhttpservice.utils.dateTimeFormat1
 import com.example.springhttpservice.utils.getFormattedDate
 import org.apache.poi.ss.usermodel.Cell
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.io.InputStream
 import java.util.*
-import kotlin.collections.HashMap
 
 
 //处理excel 文件
@@ -95,6 +95,12 @@ class DisposeExcelFiles {
      */
     private fun saveCalData(startDate: Date, originDataList: List<OriginData>) {
         if (originDataList.isEmpty()) return
+        //查找数据库中是否已经存在, 不在继续 保存数据..
+        if (calDataService.existsBy日期(startDate)) {
+            println("cal data is already exist !! date:${dateFormat1.format(startDate)}")
+            return
+        }
+
         //获取 当前日期 近三天的数据
         val dataListIn3DaysMap = originDataService.findDataInDays(startDate, 8)
         //按时间倒序
@@ -119,31 +125,26 @@ class DisposeExcelFiles {
             // 今天的数据  : it
             val _last_0 = it.主力控盘比
             //1天前
-            val _last_1 = if (date_last_1 == null) 0f
-            else dataMap_2[date_last_1]!![it.代码]?.主力控盘比 ?: 0f
+            val _last_1 = if (date_last_1 == null) 0f else dataMap_2[date_last_1]!![it.代码]?.主力控盘比 ?: 0f
             //2天前
-            val _last_2 = if (date_last_2 == null) 0f
-            else dataMap_2[date_last_2]!![it.代码]?.主力控盘比 ?: 0f
+            val _last_2 = if (date_last_2 == null) 0f else dataMap_2[date_last_2]!![it.代码]?.主力控盘比 ?: 0f
             // 3天前
-            val _last_3 = if (date_last_3 == null) 0f
-            else dataMap_2[date_last_3]!![it.代码]?.主力控盘比 ?: 0f
+            val _last_3 = if (date_last_3 == null) 0f else dataMap_2[date_last_3]!![it.代码]?.主力控盘比 ?: 0f
             // 4天前
-            val _last_4 = if (date_last_4 == null) 0f
-            else dataMap_2[date_last_4]!![it.代码]?.主力控盘比 ?: 0f
+            val _last_4 = if (date_last_4 == null) 0f else dataMap_2[date_last_4]!![it.代码]?.主力控盘比 ?: 0f
             // 5天前
-            val _last_5 = if (date_last_5 == null) 0f
-            else dataMap_2[date_last_5]!![it.代码]?.主力控盘比 ?: 0f
+            val _last_5 = if (date_last_5 == null) 0f else dataMap_2[date_last_5]!![it.代码]?.主力控盘比 ?: 0f
             //6 天前
-            val _last_6 = if (date_last_6 == null) 0f
-            else dataMap_2[date_last_6]!![it.代码]?.主力控盘比 ?: 0f
+            val _last_6 = if (date_last_6 == null) 0f else dataMap_2[date_last_6]!![it.代码]?.主力控盘比 ?: 0f
             //7天前
-            val _last_7 = if (date_last_7 == null) 0f
-            else dataMap_2[date_last_7]!![it.代码]?.主力控盘比 ?: 0f
+            val _last_7 = if (date_last_7 == null) 0f else dataMap_2[date_last_7]!![it.代码]?.主力控盘比 ?: 0f
 
 //            println(listOf(_last_0, _last_1, _last_2, _last_3, _last_4, _last_5, _last_6, _last_7).toString())
             CalData(
-                    代码 = it.代码, 名称 = it.名称,
-                    日期 = it.日期, last_0 = it.主力控盘比,
+                    代码 = it.代码,
+                    名称 = it.名称,
+                    日期 = it.日期,
+                    last_0 = it.主力控盘比,
                     last_1 = _last_1,
                     last_2 = _last_2,
                     last_3 = _last_3,
@@ -151,6 +152,7 @@ class DisposeExcelFiles {
                     last_5 = _last_5,
                     last_6 = _last_6,
                     last_7 = _last_7,
+                    行业_概念 = it.行业 + it.概念
             ).apply { calDataList.add(this) }
         }
         calDataService.saveAll(calDataList)

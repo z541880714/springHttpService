@@ -18,7 +18,8 @@ data class PrimaryKeyOriginData(var 代码: String = "", var 日期: Date = Date
 //SH605598	上海港湾	20.46	    378.37	    0.62%	1.21	        -2.31	-22161946	44.95%	2.25	1922.34万	建筑装饰-建筑装饰-专业工程	【核准制次新股;新股与次新股;基建工程;一带一路;半年报预增;高送转预期】	0	2	    看多	    25.40%	21.03	908358610	16.12	--	    --	        --	        668
 @Entity
 //@IdClass(value = PrimaryKeyOriginData::class)
-@Table(name = "originData", indexes = [
+@Table(
+        name = "originData", indexes = [
     Index(columnList = "代码"),
     Index(columnList = "日期"),
 ])

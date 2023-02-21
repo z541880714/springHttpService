@@ -17,7 +17,8 @@ class TestController {
     @Autowired
     lateinit var userService: UserService
 
-    @GetMapping("/users")
+    @GetMapping("/users", "/all")
+
     fun getAllUsers() = ResponseEntity.ok().body(userService.getAllUsers())
 
     @GetMapping("/save")

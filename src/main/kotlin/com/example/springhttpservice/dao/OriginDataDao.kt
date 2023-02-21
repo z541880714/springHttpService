@@ -23,7 +23,6 @@ interface OriginDataDao : JpaRepository<OriginData, Long> {
     /**
      * 日期格式为: 2022-09-09
      */
-    @Query("delete from OriginData  o where o.日期 = ?1")
-    fun deleteBy日期(date: Date): Boolean
+    fun deleteBy日期(date: Date): Int
 
 }

@@ -47,7 +47,8 @@ class UploadController(@Autowired val userService: UserService) {
                 if (multiMap.size == 0) {
                     return ResponseEntity<String>("no file!!", HttpStatus.OK)
                 }
-                val files = multiMap["file"] ?: return ResponseEntity<String>("no file param !!", HttpStatus.OK)
+                val files =
+                        multiMap["file"] ?: return ResponseEntity<String>("no file param !!", HttpStatus.OK)
                 val resultStr = disposeFile(files)
                 return ResponseEntity<String>(resultStr, HttpStatus.OK)
             }
@@ -66,7 +67,7 @@ class UploadController(@Autowired val userService: UserService) {
     private fun disposeFile(files: List<MultipartFile>): String {
         val resultSb = arrayListOf<String>()
 
-        files.forEach { file ->
+        files.sortedBy { it.originalFilename }.forEach { file ->
             println("start dispose file , name:${file.originalFilename}")
             val fileName = file.originalFilename
             //无此文件.

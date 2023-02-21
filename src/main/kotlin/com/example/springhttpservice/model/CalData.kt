@@ -4,21 +4,20 @@ import jakarta.persistence.*
 import java.util.Date
 
 @Entity
-@Table
-data class CalData(
-        @Id @GeneratedValue(strategy = GenerationType.AUTO) var id: Long = 0,
-        val 代码: String = "",
-        val 名称: String = "",
-        val 日期: Date = Date(),
-        val last_0: Float = 0f,
-        val last_1: Float = 0f,
-        val last_2: Float = 0f,
-        val last_3: Float = 0f,
-        val last_4: Float = 0f,
-        val last_5: Float = 0f,
-        val last_6: Float = 0f,
-        val last_7: Float = 0f,
-) {
+@Table(indexes = [Index(columnList = "代码"), Index(columnList = "日期")])
+data class CalData(@Id @GeneratedValue(strategy = GenerationType.AUTO) var id: Long = 0,
+                   val 代码: String = "", //
+                   val 名称: String = "", //
+                   val 日期: Date = Date(), //
+                   val last_0: Float = 0f, //
+                   val last_1: Float = 0f, //
+                   val last_2: Float = 0f, //
+                   val last_3: Float = 0f, //
+                   val last_4: Float = 0f, //
+                   val last_5: Float = 0f, //
+                   val last_6: Float = 0f, //
+                   val last_7: Float = 0f, //
+                   val 行业_概念: String = "") {
     val last_0_1: Float = last_0 - last_1
     val last_1_2: Float = last_1 - last_2
     val last_2_3: Float = last_2 - last_3
