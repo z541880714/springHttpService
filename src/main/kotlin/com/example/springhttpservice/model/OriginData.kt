@@ -17,14 +17,15 @@ data class PrimaryKeyOriginData(var 代码: String = "", var 日期: Date = Date
 //SH605599	菜百股份	22.81	    14.12	    -1.96%	6.43	        -0.15	-8315508	0.99%	5.85	577.12万	轻工制造-家用轻工-饰品	【北京国资改革;电子商务;黄金概念;冬奥会;冬奥纪念品;地方国资改革;网络直播】	1	--	    --	    -1.28%	10.02	5878511600	15.7	--	    --	        --	        --
 //SH605598	上海港湾	20.46	    378.37	    0.62%	1.21	        -2.31	-22161946	44.95%	2.25	1922.34万	建筑装饰-建筑装饰-专业工程	【核准制次新股;新股与次新股;基建工程;一带一路;半年报预增;高送转预期】	0	2	    看多	    25.40%	21.03	908358610	16.12	--	    --	        --	        668
 @Entity
-@IdClass(value = PrimaryKeyOriginData::class)
+//@IdClass(value = PrimaryKeyOriginData::class)
 @Table(name = "originData", indexes = [
     Index(columnList = "代码"),
     Index(columnList = "日期"),
 ])
 data class OriginData(
-        @Id val 代码: String = "", //代码
-        @Id val 日期: Date = Date(), //日期
+        @Id @GeneratedValue(strategy = GenerationType.AUTO) val id: Long = 0,
+        val 代码: String = "", //代码
+        val 日期: Date = Date(), //日期
         val 名称: String = "", //名称
         val 主力控盘比: Float = 0f, //主力控盘比
         val 零散散户变化: Float = 0f, //零散散户变化

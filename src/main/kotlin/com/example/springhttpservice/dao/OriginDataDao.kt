@@ -9,11 +9,21 @@ import java.util.*
 
 
 @Repository
-interface OriginDataDao : JpaRepository<OriginData, String> {
+interface OriginDataDao : JpaRepository<OriginData, Long> {
 
     fun findAllBy日期(date: Date): List<OriginData>
+
+
     fun findAllBy代码(code: String): List<OriginData>
 
     fun findBy代码And日期(code: String, date: Date): OriginData
+
+    fun existsBy日期(start: Date): Boolean
+
+    /**
+     * 日期格式为: 2022-09-09
+     */
+    @Query("delete from OriginData  o where o.日期 = ?1")
+    fun deleteBy日期(date: Date): Boolean
 
 }

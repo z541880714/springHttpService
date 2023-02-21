@@ -13,7 +13,7 @@ import java.util.Date
 class OriginDataService(@Autowired val dao: OriginDataDao) {
 
 
-    fun findDataInDays(start: Date, dayCount: Int): List<OriginData> {
+    fun findDataInDays(start: Date, dayCount: Int): Map<Date, List<OriginData>> {
         var count = dayCount
         val dateTemp = Date(start.time)
         var localDate = LocalDate.of(start.year, start.month, start.date)
@@ -21,16 +21,18 @@ class OriginDataService(@Autowired val dao: OriginDataDao) {
         val result = arrayListOf<OriginData>()
         while (count > 0 && totalQueryCount > 0) {
             val list = dao.findAllBy日期(dateTemp)
-            result.addAll(list)
-            println("list size:${list.size}, data:$dateTemp")
-            if (list.isNotEmpty()) count--
+            if (list.isNotEmpty()) {
+                result.addAll(list)
+                println("list size:${list.size}, data:$dateTemp")
+                count--
+            }
             localDate = localDate.minusDays(1)
             dateTemp.year = localDate.year
             dateTemp.month = localDate.monthValue
             dateTemp.date = localDate.dayOfMonth
             totalQueryCount--
         }
-        return result
+        return result.groupBy { it.日期 }
     }
 
     fun findAll(): List<OriginData> = dao.findAll()
@@ -44,9 +46,16 @@ class OriginDataService(@Autowired val dao: OriginDataDao) {
         return dao.findBy代码And日期(code, dateFormat1.parse(dateStr))
     }
 
-    fun findDataByDate(date: Date) = dao.findAllBy日期(date)
+    fun findAllByDate(date: Date) = dao.findAllBy日期(date)
 
     fun findAllBy代码(code: String) = dao.findAllBy代码(code)
+    fun exsistBy日期(startDate: Date) = dao.existsBy日期(startDate)
+    fun deleteAllByDate(date: Date) {
+        val dataList = findAllByDate(date)
+        dao.deleteAll(dataList)
+    }
+
+    fun deleteAll() = dao.deleteAll()
 
 
 }
