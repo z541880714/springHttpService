@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.io.InputStream
 import java.util.*
+import kotlin.collections.HashMap
 
 
 //处理excel 文件
@@ -80,6 +81,7 @@ class DisposeExcelFiles {
                 originDataList.add(this)
             }
         }
+        println("save origin date complete, start save calData!")
         if (originDataList.size > 0) {
             originDataService.saveAll(originDataList)
             saveCalData(startDate, originDataList)
@@ -95,12 +97,11 @@ class DisposeExcelFiles {
         if (originDataList.isEmpty()) return
         //获取 当前日期 近三天的数据
         val dataListIn3DaysMap = originDataService.findDataInDays(startDate, 8)
-
         //按时间倒序
         val dayIndexes = dataListIn3DaysMap.keys.sortedByDescending { it }
 
+        val dataMap_2 = dataListIn3DaysMap.map { it.key to it.value.map { d -> d.代码 to d }.toMap() }.toMap()
         println("map keys :indexes:$dayIndexes,  content:   ${dataListIn3DaysMap.keys}")
-
         //昨日,  如果没有此数据, 为null
         val date_last_1 = if (dayIndexes.size >= 2) dayIndexes[1] else null
         //前日, 如果没有数据 则为 null
@@ -111,30 +112,35 @@ class DisposeExcelFiles {
         val date_last_6 = if (dayIndexes.size >= 7) dayIndexes[6] else null
         val date_last_7 = if (dayIndexes.size >= 8) dayIndexes[7] else null
 
+        println("1: $date_last_1, 2:$date_last_2, 3:$date_last_3, 4:$date_last_4, 5:$date_last_5, 6:$date_last_6, 7:$date_last_7")
+
         val calDataList = arrayListOf<CalData>()
         originDataList.forEach {
             // 今天的数据  : it
+            val _last_0 = it.主力控盘比
             //1天前
-            val _last_1 = if (date_last_1 == null) 0f else dataListIn3DaysMap[date_last_1]!!
-                    .find { data -> data.代码 == it.代码 }?.主力控盘比 ?: 0f
+            val _last_1 = if (date_last_1 == null) 0f
+            else dataMap_2[date_last_1]!![it.代码]?.主力控盘比 ?: 0f
             //2天前
-            val _last_2 = if (date_last_2 == null) 0f else dataListIn3DaysMap[date_last_2]!!
-                    .find { data -> data.代码 == it.代码 }?.主力控盘比 ?: 0f
+            val _last_2 = if (date_last_2 == null) 0f
+            else dataMap_2[date_last_2]!![it.代码]?.主力控盘比 ?: 0f
             // 3天前
-            val _last_3 = if (date_last_3 == null) 0f else dataListIn3DaysMap[date_last_3]!!
-                    .find { data -> data.代码 == it.代码 }?.主力控盘比 ?: 0f
+            val _last_3 = if (date_last_3 == null) 0f
+            else dataMap_2[date_last_3]!![it.代码]?.主力控盘比 ?: 0f
             // 4天前
-            val _last_4 = if (date_last_4 == null) 0f else dataListIn3DaysMap[date_last_4]!!
-                    .find { data -> data.代码 == it.代码 }?.主力控盘比 ?: 0f
+            val _last_4 = if (date_last_4 == null) 0f
+            else dataMap_2[date_last_4]!![it.代码]?.主力控盘比 ?: 0f
             // 5天前
-            val _last_5 = if (date_last_5 == null) 0f else dataListIn3DaysMap[date_last_5]!!
-                    .find { data -> data.代码 == it.代码 }?.主力控盘比 ?: 0f
+            val _last_5 = if (date_last_5 == null) 0f
+            else dataMap_2[date_last_5]!![it.代码]?.主力控盘比 ?: 0f
             //6 天前
-            val _last_6 = if (date_last_6 == null) 0f else dataListIn3DaysMap[date_last_6]!!
-                    .find { data -> data.代码 == it.代码 }?.主力控盘比 ?: 0f
+            val _last_6 = if (date_last_6 == null) 0f
+            else dataMap_2[date_last_6]!![it.代码]?.主力控盘比 ?: 0f
             //7天前
-            val _last_7 = if (date_last_7 == null) 0f else dataListIn3DaysMap[date_last_7]!!
-                    .find { data -> data.代码 == it.代码 }?.主力控盘比 ?: 0f
+            val _last_7 = if (date_last_7 == null) 0f
+            else dataMap_2[date_last_7]!![it.代码]?.主力控盘比 ?: 0f
+
+//            println(listOf(_last_0, _last_1, _last_2, _last_3, _last_4, _last_5, _last_6, _last_7).toString())
             CalData(
                     代码 = it.代码, 名称 = it.名称,
                     日期 = it.日期, last_0 = it.主力控盘比,
@@ -146,9 +152,8 @@ class DisposeExcelFiles {
                     last_6 = _last_6,
                     last_7 = _last_7,
             ).apply { calDataList.add(this) }
-
-            calDataService.saveAll(calDataList)
         }
+        calDataService.saveAll(calDataList)
     }
 
 
